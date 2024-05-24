@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Donate to {{ streamer }} with HiveLive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+	<link rel="stylesheet" href="/assets/pico.min.css" />
+  <style>
+    #hkCheck{display:none;}
+    #tabs, .text-center{text-align: center;}
+    #tabs button {margin: 3% 1%;}
+    .label {margin: 2% 0;font-weight: bold;}
+    footer{margin-top:6%;}
+    label small {font-weight: 400}
+  </style>
+
+  <meta name="description" content="Bring your stream to a new level with HIVE & Hive-Engine tokens donations" />
+
+  <meta property="og:title" content="Donate to {{ streamer }} with HiveLive" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ full_url_for('index') }}" />
+  <meta property="og:image" content="{{ full_url_for('index') }}/assets/og-logo.png" />
+  <meta property="og:description" content="Bring your stream to a new level with HIVE & Hive-Engine tokens donations" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@FlorentKosmala" />
+  <meta name="twitter:title" content="Donate to {{ streamer }} with HiveLive" />
+  <meta name="twitter:description" content="Bring your stream to a new level with HIVE & Hive-Engine tokens donations" />
+  <meta name="twitter:image" content="{{ full_url_for('index') }}/assets/og-logo.png" />
+</head>
+<body>
+	<main class="container">
+		<header class="text-center">
+      <h1>Donate to {{ streamer }}</h1>
+		</header>
+		<main>
+            <p id="hkCheck">You need <a href="https://hive-keychain.com/">Hive Keychain</a> to send Hive-Engine tokens. For now, you can only send HIVE and HBD.</p>
+            <div id="tabs">
+              <button id="hiveTab">HIVE / HBD</button>
+              <button id="heTab">Other Hive Tokens</button>
+            </div>
+            <h3 id="response"></h3>
+		  			<article id="hiveTabContent" class="donate">
+              <div class="donateForm">
+                <label class="label" for="donationAmount">Amount:
+                  <input id="donationAmount" type="number" placeholder="Enter an amount" min="{{ limit }}" />
+                  <small>{{ streamer }} set minimal donation to {{ limit }}</small>
+                </label>
+
+                <label class="label">Currency: &nbsp;
+                    <input type="radio" id="donationHive" name="currency" value="HIVE" checked />
+                    <label for="donationHive">HIVE</label>
+                    <input type="radio" id="donationHbd" name="currency" value="HBD" />
+                    <label for="donationHbd">HBD</label>
+                </label>
+
+                <label class="label" for="donationMemo">Message:
+                  <input id="donationMemo" type="text" placeholder="Enter your message to {{ streamer }}" />
+                </label>
+              </div>
+            </article>
+
+            <article id="heTabContent" class="donate">
+                <label class="label"for="donationAccountHE">Sender account :
+                  <input id="donationAccountHE" type="text" placeholder="Enter your HIVE account (without @)" />
+                </label>
+
+                <label class="label" for="donationAmountHE">Amount :
+                  <input id="donationAmountHE" type="number" placeholder="Enter an amount" min="{{ limit }}" />
+                  <small>{{ streamer }} set minimal donation to {{ limit }}</small>
+                </label>
+
+                <label class="label">Token :
+                  <select id="donationToken">
+                    {% for token in tokens %}
+                    <option>{{ token }}</option>
+                    {% endfor %}
+                  </select>
+                </label>
+
+                <label class="label" for="donationMemoHE">Message :
+                  <input id="donationMemoHE" type="text" placeholder="Enter your message to {{ streamer }}" />
+                </label>
+            </article>
+
+            <p class="text-center">
+              <button id="donationSend" class="button">Send Donation</button>
+            </p>
+		</main>
+
+    <footer class="text-center">
+      <hr>
+      <p>This service is absolutely free and brought to you by :</p>
+      <p>
+        <a href="https://stream.hivelive.me/">
+          <picture>
+            <source srcset="/assets/hs-logo-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="/assets/hs-logo-light.png" alt="Hive Stream logo">
+          </picture>
+        </a>
+      </p>
+      <p>If you want to support this project, please consider make a donation to <a href="/donate/@bambukah">@bambukah</a></p>
+    </footer>
+	</main>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script>
+    window.onload = function () {
+      receiver = "{{ streamer|lower }}";
+  		if (typeof hive_keychain === 'undefined') {
+        $('#heTab').attr('disabled', true).removeClass('enabled');
+        $('#hkCheck').show();
+        $('#donationSend').on("click tap", function() {
+          amount = $('#donationAmount').val();
+          token = $("input[name='currency']:checked").val();
+          memo = $('#donationMemo').val();
+          url = "https://hivesigner.com/sign/transfer/?to="+receiver+"&amount="+amount+token+"&memo="+memo;
+          window.location.href = url;
+        });
+      } else {
+        $('#donationSend').on("click tap", function() {
+          visTab = $('.donate:visible').attr('id');
+          to = receiver;
+          if (visTab == "hiveTabContent") {
+            amount = parseFloat($('#donationAmount').val()).toFixed(3);
+            memo = $('#donationMemo').val();
+            currency = $("input[name='currency']:checked").val();
+            hive_keychain.requestTransfer(
+              "donate",
+              to,
+              amount,
+              memo,
+              currency,
+              function (response) {
+                $('#response').text(response.message);
+              },
+              false,
+              null
+            );
+          } else {
+            from = $('#donationAccountHE').val();
+            token = $('#donationToken option:selected').text();
+            amount = parseFloat($('#donationAmountHE').val()).toFixed(3);
+            memo = $('#donationMemoHE').val();
+            hive_keychain.requestSendToken(
+              from,
+              receiver,
+              amount,
+              memo,
+              token,
+              function (response) {
+                $('#response').text(response.message);
+              },
+            );
+          }
+        });
+      }
+  	}
+
+    $(document).ready(function() {
+      $('#tabs button:not(:first)').addClass('secondary');
+      $('.donate').hide();
+      $('.donate:first').show();
+
+      $('#tabs button').click(function(){
+        var tab = $(this).attr('id');
+        if($(this).hasClass('secondary')) {
+          $('#tabs button').addClass('secondary');
+          $(this).removeClass('secondary');
+          $('.donate').hide();
+          $('#'+ tab +'Content').fadeIn('slow');
+        }
+      });
+    });
+	</script>
+</body>
+</html>

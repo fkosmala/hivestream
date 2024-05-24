@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>HiveLive user panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link rel="stylesheet" href="https://fonts.bunny.net/css?family=Roboto:300,300italic,700,700italic&family=Space+Grotesk:wght@700&display=swap" />
+  <link rel="stylesheet" href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" type="text/css" />
+  <link rel="stylesheet" href="/assets/pico.min.css" />
+  <link rel="stylesheet" href="{% if user['font-family'] %}https://fonts.bunny.net/css?family={{user['font-family']|replace({' ': '-'})|lower }}:400{% endif %}" id="fontLink">
+  <style>
+	.text-center{text-align: center;}
+	main{
+		padding-top:1% !important;
+	}
+	#render {
+		border: 1px solid var(--pico-color);
+		background: white;
+		padding: 1%;
+	}
+	
+	hr {
+		margin: 2%;
+	}
+
+	p code {margin: 1%;}
+	
+	{% if user %}
+		#donation {
+			font-weight: bold;
+			font-size: {{ user['font-size'] }}pt;
+			font-family: {{ user['font-family'] }}, sans-serif;
+			color: {{ user['text-color'] }};
+			text-shadow: -2px 0 black,0 2px black, 2px 0 black, 0 -2px black; 
+			margin: auto;
+		}
+		
+		#donation .vars {
+			color: {{ user['values-color'] }};
+		}
+	{% else %}
+		#donation {
+			font-weight: bold;
+			font-size: 32pt;
+			font-family: sans-serif;
+			color: khaki;
+			text-shadow: -2px 0 black,0 2px black, 2px 0 black, 0 -2px black; 
+			margin: auto;
+		}
+		
+		#donation .vars {
+			color: red;
+		}
+	{% endif %}
+  </style>
+
+</head>
+<body class="container">
+	<nav>
+		<ul>
+			<li>
+				<picture>
+					<source srcset="/assets/logo-dark-small.png" media="(prefers-color-scheme: dark)">
+					<img src="/assets/logo-light-small.png" alt="Hive Stream logo">
+				</picture>
+			</li>
+		</ul>
+		<ul>
+			<li><a role="button" href="{{ url_for('logout') }}">Log out</a></li>
+		</ul>
+	</nav>
+
+	<header class="grid text-center">
+		<div>
+			<h3>Browser source link</h3>
+			<p><code id="streamLink" data-tooltip="Add it into your stream">https://stream.hivelive.me/stream/{{ account }}</code></p>
+			<button class="copyBtn" data-link="streamLink">Copy this link</button>
+		</div>
+		<div>
+			<h3>Donation link</h3>
+			<p><code id="donateLink" data-tooltip="Share it with your viewers/users">https://stream.hivelive.me/donate/{{ account }}</code></p>
+			<button class="copyBtn" data-link="donateLink">Copy this link</button>
+		</div>
+	</header>
+	
+	<main>
+		<article>
+			<div class="grid">
+				<div>
+					<fieldset>
+						<h4>Animation</h4>
+						<label>Change your GIF:</label>
+						<small>Max size : 8MB</small>
+						<div class="dropzone" id="imgUpl">
+						</div>
+					</fieldset>
+
+					<hr>
+
+					<fieldset>
+						<h4>Font &amp; color</h4>
+						<label for="fontFamily">Font family:</label>
+						<select id="fontFamily">
+							<option></option>
+						{% for font in fonts %}
+							<option{% if font == user['font-family'] %} selected="selected"{% endif %}>{{font}}</option>
+						{% endfor %}
+						</select>
+
+						<label for="fontSize">Font size (in pt):</label>
+						<input type="number" id="fontSize" name="fontSize" {%if user['font-size'] %}value="{{ user['font-size'] }}"{% else %}value="32"{% endif %}>
+
+						<label for="Text color">Text color:</label>
+						<input type="color" id="textColor" name="textColor" {%if user['text-color'] %}value="{{ user['text-color'] }}"{% else %}value="#F0E68C"{% endif %}>
+						
+						<label for="Text color">Values color:</label>
+						<input type="color" id="valuesColor" name="valuesColor" {%if user['values-color'] %}value="{{ user['values-color'] }}"{% else %}value="#FF0000"{% endif %}>
+					</fieldset>
+
+					<hr>
+
+					<fieldset>
+						<h4>Other options</h4>
+						<label for="minimalDonation">Minimal donation:</label>
+						<input type="number" id="minimalDonation" name="minimalDonation" {%if user['minimal-donation'] %}value="{{ user['minimal-donation'] }}"{% else %}value="0.001"{% endif %}>
+
+						<input type="checkbox" name="hidemsg" id="hidemsg" {% if user['hide-msg'] == "true" %}checked{% endif %}>
+						<label class="label-inline" for="hidemsg">Hide donation message</label>
+					</fieldset>
+					<fieldset>
+						<input type="hidden" name="customAnim" id="customAnim" {% if user['custom-anim'] == "true" %}value="true"{% else %}value="false"{% endif %}>
+					</fieldset>
+					<div class="text-center">
+						<p id="saveMessage"></p>
+						<button id="customSave">Save</button>
+					</div>
+				</div>
+				
+				<div class="text-center">
+					<h4>Render</h4>
+					<div id="render">
+						<p>
+							{% if user['custom-anim'] == true %}
+							<img id="anim" src="/users/{{ account }}/anim.gif" width="400">
+							{% else %}
+							<img id="anim" src="/anim.gif" width="400">
+							{% endif %}
+						</p>
+						<p id="donation">
+							From: <span class="vars" id="from">your_donator</span><br>
+							Amount: <span class="vars" id="value">123.00</span> <span id="symbol">HIVE</span><br>
+							<span id="memo">Test message from donator</span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</article>
+	</main>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js"></script>
+
+	<script>
+		$(function() {
+			let myDropzone = $("#imgUpl").dropzone({
+				url: "{{ url_for('save-img') }}",
+				method: "post",
+				uploadMultiple: false,
+				createImageThumbnails: false,
+				maxFiles: 1,
+				acceptedFiles: 'image/gif',
+				error:function (file, message) {
+					console.log(message);
+				},
+				success: function (file) {
+					$('#anim').attr("src","");
+					$('#anim').attr("src","/users/{{ account }}/anim.gif?"+new Date().getTime());
+					$('#customAnim').val('true');
+				}
+			});
+
+			$('#fontFamily').on('change', function() {
+				family = $(this).find(":selected").text();
+				slug = family.replace(/\s+/g, '-').toLowerCase();
+				fontURL = "https://fonts.bunny.net/css?family="+slug+":400";
+				$('#fontLink').attr('href', fontURL);
+				$('#donation').css("font-family", family);
+			});
+			
+			$('#fontSize').on('input keyup mouseup', function() {
+				size = $(this).val();
+				$('#donation').css("font-size", size+"pt");
+			});
+			
+			$('#textColor').on('change', function() {
+				color = $(this).val();
+				$('#donation').css("color", color);
+			});
+			
+			$('#valuesColor').on('change', function() {
+				color = $(this).val();
+				$('.vars').css("color", color);
+			});
+
+			if ($('#hidemsg').is(':checked')) {
+				$('#memo').hide();
+			} else $('#memo').show();
+			
+			$('#hidemsg').on('change', function() {
+				if ($(this).is(':checked')) {
+					$('#memo').hide();
+				} else $('#memo').show();
+			});
+			
+			$('#customSave').on('click tap', function() {
+				$('#saveMessage').text('');
+				fields = {};
+				fields['fontFamily'] = $('#fontFamily').find(":selected").text();
+				fields['fontSize'] = $('#fontSize').val();
+				fields['textColor'] = $('#textColor').val();
+				fields['valuesColor'] = $('#valuesColor').val();
+				fields['customAnim'] = $('#customAnim').val();
+				fields['minimalDonation'] = $('#minimalDonation').val();
+				if ($('#hidemsg').is(':checked') == true) {
+					fields['hideMsg'] = 'true';
+				} else fields['hideMsg'] = 'false';
+				jsonFields = JSON.stringify(fields);
+				console.log(fields);
+				$.post( 
+					"{{ url_for('save-custom') }}", 
+					{ data: fields },
+					function(data) {
+						console.log(data);
+						if (data == 'OK') {
+							$('#saveMessage').text('All is saved !')
+						} else $('#saveMessage').text('Error ! Please contact Bambukah')
+					}
+				);
+			});
+
+			function clipboard(div) {
+				let tmp = $('<input>');
+				$("body").append(tmp);
+
+				tmp.val($(div).text()).select();
+				document.execCommand("copy");
+				tmp.remove();
+			}
+
+			$('.copyBtn').on('click tap', function(e) {
+				e.preventDefault();
+				let obj = $(this);
+				obj.text('Copied !').attr('disabled', true);
+				target = '#'+obj.data('link');
+				clipboard(target);
+				window.setTimeout(
+					function() {
+						obj.text('Copy this link').attr('disabled', false);
+					}
+				, 1000 );
+				
+			});
+		});
+	</script>
+</body>
+</html>

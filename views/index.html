@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>HiveLive - HIVE &amp; HiveEngine tokens donation service</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description" content="Bring your stream to a new level with HIVE/HBD &amp; Hive-Engine tokens donations" />
+
+  <meta property="og:title" content="HiveLive - HIVE/HBD &amp; HiveEngine tokens donation service for livestream" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ full_url_for('index') }}" />
+  <meta property="og:image" content="{{ full_url_for('index') }}/assets/og-logo.png" />
+  <meta property="og:description" content="Bring your stream to a new level with HIVE/HBD &amp; Hive-Engine tokens donations" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@FlorentKosmala" />
+  <meta name="twitter:title" content="HiveLive - HIVE/HBD &amp; HiveEngine tokens donation service for livestream" />
+  <meta name="twitter:description" content="Bring your stream to a new level with HIVE/HBD &amp; Hive-Engine tokens donations" />
+  <meta name="twitter:image" content="{{ full_url_for('index') }}/assets/og-logo.png" />
+
+  <link rel="stylesheet" href="/assets/pico.min.css" />
+  <style>
+	.text-center {text-align: center;}
+	main{padding: 0 !important}
+	.baseline {padding-top:2%;}
+	h4 > span{background-color: var(--pico-color);color: var(--pico-background-color); border-radius: 50%;padding: 1% 3%;margin-right:1%;}
+	.proposal{padding: 1%; text-align: center;}
+    .proposal p {font-weight: bold;}
+  </style>
+</head>
+<body class="container">
+		<header class="grid">
+				<div class="text-center">
+					<picture>
+						<source srcset="/assets/hs-logo-dark.png" media="(prefers-color-scheme: dark)">
+						<img src="/assets/hs-logo-light.png" alt="Hive Stream logo">
+					</picture>
+					<h2 class="baseline">Bring your stream to a new level with HIVE donations</h2>
+				</div>
+				<div class="column text-center">
+					<article>
+						<div id="linkForm">
+							<label for="hiveAccount">Your HIVE username :</label>
+							<input type="text" placeholder="Enter your username without @" id="hiveAccount">
+							<button id="login" class="button">Login</button>
+							<p id="error"></p>
+						</div>
+					</article>
+				</div>
+			</div>
+		</header>
+		
+		<main>
+			<article>
+				<h3>How to use ?</h3>
+				<div class="grid">
+					<div>
+						<h4><span>1</span>Username</h4>
+						<p>Enter the HIVE username who receive the donations into the text input. <a target="_blank" href="https://signup.hive.io/">Don't have HIVE account ?</a></p>
+					</div>
+					<div>
+						<h4><span>2</span>Click</h4>
+						<p>Click on the button to generate your link for your stream. It's needed to show animation and play sound on the livestream</p>
+					</div>
+					<div>
+						<h4><span>3</span>Finish</h4>
+						<p>Add a full screen Browser Source and paste the stream link into your stream software and... Share the donation link to boost engagement with tokens !</p>
+					</div>
+				</div>
+			</article>
+
+			<article>
+				<h3>Support HiveLive</h3>
+        		<div class="grid">
+					<div>
+						<h4 class="text-center">Donate</h4>
+						<label for="donationAmount">Amount :
+							<input id="donationAmount" type="number" placeholder="Enter an amount" />
+						</label>
+
+						<label for="donationToken">Currency :
+							<select id="donationToken">
+								<option value="HIVE">HIVE</option>
+								<option value="HBD">HBD</option>
+							</select>
+						</label>
+
+						<label for="donationMemo">Your donation message :
+							<input id="donationMemo" type="text" placeholder="Enter your message for HiveLive" />
+						</label>
+
+						<p class="text-center">
+							<button id="donationSend" class="button">Send Donation</button>
+						</p>
+        			</div>
+
+          			<div>
+            		<p>
+						This service is totally free but it cost some money (like web hosting, marketing, ...).You can also support my work by :
+					</p>
+    				<ul>
+    					<li>Send some HiveEngine tokens on my <a target="_blank" href="/donate/@bambukah">HIVE account</a></li>
+    					<li>Upvote my <a target="_blank" href="https://peakd.com/@bambukah/posts">posts</a></li>
+    					<li>Share this page and spread the word</li>
+    				</ul>
+					<p>
+						This service was created from an original idea of <a target="_blank" href="https://discord.gg/ewYH96e">@itharagaian</a>.
+					</p>
+					<p>
+						HiveStream is made by <a target="_blank" href="https://peakd.com/@bambukah">@bambukah</a> with &#9749;, hours of &#128435; and a lot of &#10084;.
+					</p>
+					<p>
+						You can join my <a target="_blank" href="https://discord.gg/u2qfuaFMwt">Discord server</a> to have news, ask some features, make feedbacks, about my projects or other Hive-related projects.
+					</p>
+				</div>
+			</article>
+		</main>
+
+		<footer>
+			<hr>
+			<div class="grid">
+				<div>
+					<p>Share this page :</p>
+					<ul>
+						<li><a target="_blank" href="https://twitter.com/intent/tweet?url=http%3A%2F%2FHiveLive.com%2F&text=Bring+new+level+to+your+stream+with+HiveEngine+tokens+donations.&hashtags=hive,stream">Twitter</a></li>
+						<li><a target="_blank" href="https://www.facebook.com/sharer.php?u=http%3A%2F%2FHiveLive.com%2F">Facebook</a></li>
+						<li><a target="_blank" href="https://www.linkedin.com/shareArticle?url=https%3A%2F%2FHiveLive.com%2F&title=HiveLive&summary=Bring+new+level+to+your+stream+with+HiveEngine+tokens+donations.&source=HiveLive">LinkedIn</a></li>
+					</ul>
+				</div>
+				<div>
+					<p>Follow the creator :</p>
+					<ul>
+						<li><a target="_blank" href="https://peakd.com/@bambukah">Hive</a></li>
+						<li><a target="_blank" href="https://discord.gg/u2qfuaFMwt">Discord</a></li>
+						<li><a target="_blank" href="https://twitter.com/FlorentKosmala">Twitter</a></li>
+					</ul>
+				</div>
+			</div>
+		</footer>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<script>
+
+    window.onload = function () {
+  		if (typeof hive_keychain === 'undefined') {
+        $('#donationSend').on("click tap", function() {
+          amount = $('#donationAmount').val();
+          token = $('#donationToken').val();
+          memo = $('#donationMemo').val();
+          url = "https://hivesigner.com/sign/transfer/?to=bambukah&amount="+amount+token+"&memo="+memo;
+          window.location.href = url;
+        });
+      } else {
+        $('#donationSend').on("click tap", function() {
+          to = "bambukah";
+          amount = parseFloat($('#donationAmount').val()).toFixed(3);
+          currency = $('#donationToken option:selected').text();
+          memo = $('#donationMemo').val();
+          hive_keychain.requestTransfer(
+            "donate",
+            to,
+            amount,
+            memo,
+            currency,
+            function (response) {
+              console.log("main js response - tokens");
+              console.log(response);
+            },
+            0,
+            null
+          );
+        });
+      }
+  	}
+
+	$(function() {
+    	$('#login').on('click tap', function() {
+    		account = $('#hiveAccount').val();
+    		message ="hivelive12345";
+
+			if (account == "") { 
+				$('#error').text('Please enter a account') 
+			}
+			else if (account.length <= 2) {
+				 $('#error').text('3 letters minimum')
+			} else {
+				hive_keychain.requestSignBuffer(
+					account,
+					message,
+					'Active',
+					function (response) {
+						console.log(response);
+						if (response.success != false) {
+							password = response.result;
+							$.post( 
+								"{{ url_for('login') }}", 
+								{ username: account, passwd: password },
+								function(data) {
+									console.log(data);
+									if (data == 'OK') {
+										window.location.href = "{{ url_for('panel') }}";
+									}
+								}
+							);
+						} else $('#error').text(response.message);
+					},
+					null,
+					null
+				);
+			}
+    	});
+	});
+	</script>
+</body>
+</html>

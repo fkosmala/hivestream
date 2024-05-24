@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>HiveLive - HIVE & HiveEngine tokens donation service</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css" />
+  <link rel="stylesheet" href="/assets/style.css" />
+
+    <meta name="description" content="Bring your stream to a new level with HIVE/HBD & Hive-Engine tokens donations" />
+
+  <meta property="og:title" content="HiveLive - HIVE/HBD & HiveEngine tokens donation service for livestream" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ full_url_for('index') }}" />
+  <meta property="og:image" content="{{ full_url_for('index') }}/assets/influencer.png" />
+  <meta property="og:description" content="Bring your stream to a new level with HIVE/HBD & Hive-Engine tokens donations" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@FlorentKosmala" />
+  <meta name="twitter:title" content="HiveLive - HIVE/HBD & HiveEngine tokens donation service for livestream" />
+  <meta name="twitter:description" content="Bring your stream to a new level with HIVE/HBD & Hive-Engine tokens donations" />
+  <meta name="twitter:image" content="{{ full_url_for('index') }}/assets/influencer.png" />
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>HiveLive</h1>
+      <div class="row">
+        <div class="column text-center">
+          <img src="/assets/influencer.png" alt="Illustration of a streamer" />
+        </div>
+        <div class="column text-center">
+          <h2 class="baseline">Bring your stream to a new level with HIVE, HBD and Hive-Engine tokens donations</h2>
+        </div>
+		</header>
+		<main>
+			<section>
+				<h3>Accounts list</h3>
+				<div class="row">
+		  		<div class="column text-center">
+		  			<p>These accounts send some transactions which are not donations.They don't be displayed on stream page. If you want to add/remove account, you can come on <a target="_blank" href="https://discord.gg/u2qfuaFMwt">our discord server</a>.</p>
+		  		</div>
+		  	</div>
+        <div class="row">
+  		  	<div class="column">
+            <ul>
+              {% for account in accounts %}
+                <li>{{ account }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+    	</section>
+
+			<section>
+				<h3>Support HiveLive</h3>
+        <div class="row">
+					<div class="column">
+            <h4 class="text-center">Donate</h4>
+            <label for="donationAmount">Amount :</label>
+            <input id="donationAmount" type="number" placeholder="Enter an amount" />
+            <label for="donationToken">Currency :</label>
+            <select id="donationToken">
+              <option value="HIVE">HIVE</option>
+              <option value="HBD">HBD</option>
+            </select>
+            <label for="donationMemo">Your donation message :</label>
+            <input id="donationMemo" type="text" placeholder="Enter your message for HiveLive" />
+            <p class="text-center">
+              <button id="donationSend" class="button">Send Donation</button>
+            </p>
+          </div>
+          <div class="column">
+            <p>This service is totally free but it cost some money (like web hosting, marketing, ...). You can also support my work by :</p>
+    				<ul>
+    					<li>Send some HiveEngine tokens on my <a target="_blank" href="https://peakd.com/@bambukah">HIVE account</a></li>
+    					<li>Upvote my <a target="_blank" href="https://peakd.com/@bambukah/posts">posts</a></li>
+    					<li>Share this page and spread the word</li>
+    				</ul>
+          </div>
+        </div>
+			</section>
+		</main>
+
+		<footer>
+			<div class="row">
+				<div class="column">
+					<p>Share this page :</p>
+					<ul>
+						<li><a target="_blank" href="https://twitter.com/intent/tweet?url=http%3A%2F%2FHiveLive.com%2F&text=Bring+new+level+to+your+stream+with+HiveEngine+tokens+donations.&hashtags=hive,stream">Twitter</a></li>
+						<li><a target="_blank" href="https://www.facebook.com/sharer.php?u=http%3A%2F%2FHiveLive.com%2F">Facebook</a></li>
+						<li><a target="_blank" href="https://www.linkedin.com/shareArticle?url=https%3A%2F%2FHiveLive.com%2F&title=HiveLive&summary=Bring+new+level+to+your+stream+with+HiveEngine+tokens+donations.&source=HiveLive">LinkedIn</a></li>
+					</ul>
+				</div>
+				<div class="column">
+					<p>Follow the creator :</p>
+					<ul>
+						<li><a target="_blank" href="https://peakd.com/@bambukah">Hive</a></li>
+						<li><a target="_blank" href="https://discord.gg/u2qfuaFMwt">Discord</a></li>
+						<li><a target="_blank" href="https://twitter.com/FlorentKosmala">Twitter</a></li>
+					</ul>
+          <p>From an original idea of <a target="_blank" href="https://peakd.com/@itharagaian">@itharagaian</a></p>
+				</div>
+			</div>
+		</footer>
+	</div>
+</body>
+</html>

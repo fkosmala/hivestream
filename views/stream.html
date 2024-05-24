@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+  {% if user['font-family'] %}
+  <link rel="stylesheet" href="https://fonts.bunny.net/css?family={{user['font-family']|replace({' ': '-'})|lower}}:400">
+  {% endif %}
+	<style>
+		body {
+			text-align:center; 
+			background-color: rgba(0, 0, 0, 0);
+			margin: 0px auto; 
+			overflow: hidden;
+		}
+		
+		.hide {display:none;}
+		
+		{% if user %}
+		.donation {
+			font-size: {{ user['font-size'] }}pt; 
+			font-weight: bold;
+			font-family: "{{ user['font-family'] }}", sans-serif;
+			color: {{ user['text-color'] }};
+			text-shadow: -2px 0 black,0 2px black, 2px 0 black, 0 -2px black; 
+			width: 960px; 
+			margin: auto;
+		}
+		.values {
+			color: {{ user['values-color'] }};
+		}
+		
+		{% else %}
+		.donation {
+			font-size: 32pt; 
+			font-weight: bold;
+			font-family: sans-serif;
+			color: khaki;
+			text-shadow: -2px 0 black,0 2px black, 2px 0 black, 0 -2px black; 
+			width: 960px; 
+			margin: auto;
+		}
+
+		{% endif %}
+	</style>
+</head>
+
+<body>
+<div id="heTokens" class="donation">
+	<p>
+		{% if user['custom-anim'] == "true" %}
+		<img src="/users/{{ account }}/anim.gif" width="400" />
+		{% else %}
+		<img src="/anim.gif" width="400" />
+		{% endif %}
+	</p>
+	<p id="heDonation">
+		From: <span class="values" id="heFrom"></span><br />
+		Amount: <span class="values" id="heValue"></span> <span id="heSymbol"></span>
+	</p>
+  <p id="heMemo"{% if (user['hide-msg'] == 'true') %} class="hide"{% endif %}></p>
+	<p id="heTime" class="hide"></p>
+</div>
+
+<div id="hiveTokens" class="donation">
+	<p>
+		{% if user['custom-anim'] == "true" %}
+		<img src="/users/{{ account }}/anim.gif" width="400" />
+		{% else %}
+		<img src="/anim.gif" width="400" />
+		{% endif %}
+	</p>
+	<p id="hiveDonation">
+		From: <span class="values" id="hiveFrom"></span><br />
+		Amount: <span class="values" id="hiveValue"></span>
+	</p>
+
+  <p id="hiveMemo"{% if (user['hide-msg'] == "true") %} class="hide"{% endif%}></p>
+
+	<p id="hiveTime" class="hide"></p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" referrerpolicy="no-referrer"></script>
+<script>
+// Define Vars
+var mainAccount = "{{ account }}";
+var heUrl = "https://accounts.hive-engine.com/accountHistory?account="+mainAccount;
+var hiveUrl = 'https://api.hive.blog';
+var blacklist = JSON.parse('{{ blacklist|json_encode|raw }}');
+
+var display = 8;
+var displayTime = display*1000;
+
+var show = false;
+
+function getHiveTX() {
+  if (show == false) {
+    var hiveTxFrom = $('#hiveFrom').text();
+    var hiveTxValue = $('#hiveValue').text();
+    var hiveTxMemo = $('#hiveMemo').text();
+    var hiveTxTime = $('#hiveTime').text();
+    $.ajax({
+      url: hiveUrl,
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      processData: false,
+      data: '{"jsonrpc":"2.0", "method":"condenser_api.get_account_history", "params":["{{ account }}", -1, 1, 4], "id":1}',
+      success: function (data) {
+        //console.log(data.result[0][1]);
+        hiveDonation = data.result[0][1];
+        hiveData = hiveDonation.op[1];
+        if ((hiveDonation.timestamp > hiveTxTime) && (hiveData.from != '') && (hiveTxFrom != hiveData.from) && (hiveData.from != mainAccount) && ($.inArray(hiveData.from, blacklist) == -1)) {
+          console.log('Hive-Done');
+          show = true;
+          hiveTxFrom = hiveDonation.op[1].from;
+          hiveTxValue = hiveDonation.op[1].amount;
+          hiveTxMemo = hiveDonation.op[1].memo;
+          hiveTxTime = hiveDonation.timestamp;
+          $('#hiveFrom').text(hiveTxFrom);
+          $('#hiveValue').text(hiveTxValue);
+          $('#hiveMemo').text(hiveTxMemo);
+          $('#hiveTime').text(hiveTxTime);
+          const audio = new Audio("/coin.mp3");
+          audio.play();
+          $('#hiveTokens').fadeIn(400).delay(displayTime).fadeOut(400, function() {
+            show = false;
+          });
+        }
+      },
+      error: function(){
+        console.log("Cannot get data");
+      }
+    });
+  }
+}
+
+function getEngineTX() {
+  if (show == false) {
+    var txFrom = $('#heFrom').text();
+    var txValue = $('#heValue').text();
+    var txMemo = $('#heMemo').text();
+    var txTime = $('#heTime').text();
+    var txSymbol = "";
+    $.get(heUrl,function (data) {
+      //console.log(data[0]);
+      heDonation = data[0];
+      if ((heDonation.timestamp > txTime) && (heDonation.from != '') && (txFrom != heDonation.from) && (heDonation.from != mainAccount) && ($.inArray(heDonation.from, blacklist) == -1)) {
+        show = true;
+        console.log('HE-Done');
+        txFrom = heDonation.from;
+        txValue = heDonation.quantity;
+        txSymbol = heDonation.symbol;
+        txMemo = heDonation.memo;
+        txTime = heDonation.timestamp;
+        $('#heFrom').text(txFrom);
+        $('#heValue').text(txValue);
+        $('#heSymbol').text(txSymbol);
+        $('#heMemo').text(txMemo);
+        $('#heTime').text(txTime);
+        const audio = new Audio("/coin.mp3");
+        audio.play();
+        $('#heTokens').fadeIn(400).delay(displayTime).fadeOut(400, function() {
+          show = false;
+        });
+      }
+    });
+  }
+}
+
+$(function() {
+  $('.donation').hide();
+
+  const audio = new Audio("/coin.mp3");
+  //audio.play();
+
+  setInterval(function(){
+    if(show == false) {
+      getHiveTX();
+      getEngineTX();
+    }
+  }, 3000);
+
+});
+</script>
+
+</body>
+</html>
