@@ -95,6 +95,9 @@
 						<div class="dropzone" id="imgUpl">
 						</div>
 					</fieldset>
+                    <fieldset>
+						<input type="hidden" name="customAnim" id="customAnim" {% if user['custom-anim'] == "true" %}value="true"{% else %}value="false"{% endif %}>
+					</fieldset>
 
 					<hr>
 
@@ -120,17 +123,10 @@
 
 					<hr>
 
-					<fieldset>
-						<h4>Other options</h4>
-						<label for="minimalDonation">Minimal donation:</label>
-						<input type="number" id="minimalDonation" name="minimalDonation" {%if user['minimal-donation'] %}value="{{ user['minimal-donation'] }}"{% else %}value="0.001"{% endif %}>
+                    {% include 'partials/panel-adv_opts.html' %}
 
-						<input type="checkbox" name="hidemsg" id="hidemsg" {% if user['hide-msg'] == "true" %}checked{% endif %}>
-						<label class="label-inline" for="hidemsg">Hide donation message</label>
-					</fieldset>
-					<fieldset>
-						<input type="hidden" name="customAnim" id="customAnim" {% if user['custom-anim'] == "true" %}value="true"{% else %}value="false"{% endif %}>
-					</fieldset>
+                    <hr>
+
 					<div class="text-center">
 						<p id="saveMessage"></p>
 						<button id="customSave">Save</button>
@@ -212,6 +208,22 @@
 					$('#memo').hide();
 				} else $('#memo').show();
 			});
+            
+            $('#hidemsg').on('change', function() {
+				if ($(this).is(':checked')) {
+					$('#memo').hide();
+				} else $('#memo').show();
+			});
+            
+            if ($('#redirect').is(':checked')) {
+				$('#redirect').show();
+			} else $('#redirectDisplay').hide();
+            
+            $('#redirect').on('change', function() {
+				if ($(this).is(':checked')) {
+					$('#redirectDisplay').show();
+				} else $('#redirectDisplay').hide();
+			});
 			
 			$('#customSave').on('click tap', function() {
 				$('#saveMessage').text('');
@@ -225,6 +237,10 @@
 				if ($('#hidemsg').is(':checked') == true) {
 					fields['hideMsg'] = 'true';
 				} else fields['hideMsg'] = 'false';
+                if ($('#redirect').is(':checked') == true) {
+					fields['redirect'] = 'true';
+                    fields['redirectAccount'] = $('#redirectAccount').val();
+				} else fields['redirect'] = 'false';
 				jsonFields = JSON.stringify(fields);
 				console.log(fields);
 				$.post( 

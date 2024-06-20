@@ -164,7 +164,9 @@ $app->post('/saveCustom', function ($request, $response, $args) {
         'values-color' => $data['data']['valuesColor'],
         'hide-msg' => $data['data']['hideMsg'],
         'custom-anim' => $data['data']['customAnim'],
-        'minimal-donation' => $data['data']['minimalDonation']
+        'minimal-donation' => $data['data']['minimalDonation'],
+        'redirect' => $data['data']['redirect'],
+        'redirect-account' => $data['data']['redirectAccount']
     );
 
     $fields = json_encode($newSettings, JSON_PRETTY_PRINT);
@@ -250,12 +252,16 @@ $app->get('/donate/{streamer}', function ($request, $response, $args) {
         $limit = "0.001";
     }
 
+    if (($vars['redirect'] == true) && (isset($vars['redirect-account']))) {
+        $redirectAccount = $vars['redirect-account'];
+    } else $redirectAccount = null;
 
-  // Render donation page
+    // Render donation page
     return $this->get('view')->render($response, 'donate.html', [
         'streamer' => $account,
         'limit' => $limit,
-        'tokens' => $tokens
+        'tokens' => $tokens,
+        'redirect' => $redirectAccount
     ]);
 })->setName('donate');
 

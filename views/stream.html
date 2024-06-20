@@ -85,7 +85,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" referrerpolicy="no-referrer"></script>
 <script>
 // Define Vars
+{% if user['redirect'] == "true" and user['redirect-account'] is defined %}
+var mainAccount = "{{ user['redirect-account'] }}";
+redirection = true;
+{% else %}
 var mainAccount = "{{ account }}";
+redirection = false;
+{% endif %}
 var heUrl = "https://accounts.hive-engine.com/accountHistory?account="+mainAccount;
 var hiveUrl = 'https://api.hive.blog';
 var blacklist = JSON.parse('{{ blacklist|json_encode|raw }}');
@@ -107,11 +113,12 @@ function getHiveTX() {
       dataType: 'json',
       contentType: 'application/json',
       processData: false,
-      data: '{"jsonrpc":"2.0", "method":"condenser_api.get_account_history", "params":["{{ account }}", -1, 1, 4], "id":1}',
+      data: '{"jsonrpc":"2.0", "method":"condenser_api.get_account_history", "params":["' + mainAccount + '", -1, 1, 4], "id":1}',
       success: function (data) {
         //console.log(data.result[0][1]);
         hiveDonation = data.result[0][1];
         hiveData = hiveDonation.op[1];
+        //if ((redirect == false) || (redirect == true) && (mainAccount != ))
         if ((hiveDonation.timestamp > hiveTxTime) && (hiveData.from != '') && (hiveTxFrom != hiveData.from) && (hiveData.from != mainAccount) && ($.inArray(hiveData.from, blacklist) == -1)) {
           console.log('Hive-Done');
           show = true;

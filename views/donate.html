@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  {% if redirect %}
+  <title>Donate to {{ redirect }} by {{ streamer }} with HiveLive</title>
+  {% else %}
   <title>Donate to {{ streamer }} with HiveLive</title>
+  {% endif %}
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
@@ -33,7 +37,11 @@
 <body>
 	<main class="container">
 		<header class="text-center">
-      <h1>Donate to {{ streamer }}</h1>
+            {% if redirect %}
+            <h1>Donate to <span id="receiver">{{ redirect|capitalize }}</span> from {{ streamer|capitalize }}</h1>
+            {% else %}
+            <h1>Donate to {{ streamer }}</h1>
+            {% endif %}
 		</header>
 		<main>
             <p id="hkCheck">You need <a href="https://hive-keychain.com/">Hive Keychain</a> to send Hive-Engine tokens. For now, you can only send HIVE and HBD.</p>
@@ -57,7 +65,11 @@
                 </label>
 
                 <label class="label" for="donationMemo">Message:
-                  <input id="donationMemo" type="text" placeholder="Enter your message to {{ streamer }}" />
+                    {% if redirect %}
+                    <input id="donationMemo" type="text" placeholder="Enter your message to {{ redirect }}" />
+                    {% else %}
+                    <input id="donationMemo" type="text" placeholder="Enter your message to {{ streamer }}" />
+                    {% endif %}
                 </label>
               </div>
             </article>
@@ -81,7 +93,11 @@
                 </label>
 
                 <label class="label" for="donationMemoHE">Message :
-                  <input id="donationMemoHE" type="text" placeholder="Enter your message to {{ streamer }}" />
+                    {% if redirect %}
+                    <input id="donationMemoHE" type="text" placeholder="Enter your message to {{ redirect }}" />
+                    {% else %}
+                    <input id="donationMemoHE" type="text" placeholder="Enter your message to {{ streamer }}" />
+                    {% endif %}
                 </label>
             </article>
 
@@ -108,16 +124,24 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script>
     window.onload = function () {
-      receiver = "{{ streamer|lower }}";
+        if ($("#receiver").length) {
+            receiver = "{{ redirect|lower }}";
+        } else {
+            receiver = "{{ streamer|lower }}";
+        }
   		if (typeof hive_keychain === 'undefined') {
         $('#heTab').attr('disabled', true).removeClass('enabled');
         $('#hkCheck').show();
         $('#donationSend').on("click tap", function() {
-          amount = $('#donationAmount').val();
-          token = $("input[name='currency']:checked").val();
-          memo = $('#donationMemo').val();
-          url = "https://hivesigner.com/sign/transfer/?to="+receiver+"&amount="+amount+token+"&memo="+memo;
-          window.location.href = url;
+            amount = $('#donationAmount').val();
+            token = $("input[name='currency']:checked").val();
+            if ($("#receiver").length) {
+                memo = "HiveStream donation from [{{ streamer|lower }}] : " + $('#donationMemo').val();
+            } else {
+                memo = $('#donationMemo').val();
+            }
+            url = "https://hivesigner.com/sign/transfer/?to="+receiver+"&amount="+amount+token+"&memo="+memo;
+            window.location.href = url;
         });
       } else {
         $('#donationSend').on("click tap", function() {
@@ -125,7 +149,11 @@
           to = receiver;
           if (visTab == "hiveTabContent") {
             amount = parseFloat($('#donationAmount').val()).toFixed(3);
-            memo = $('#donationMemo').val();
+            if ($("#receiver").length) {
+                memo = "HiveStream donation from [{{ streamer|lower }}] : " + $('#donationMemo').val();
+            } else {
+                memo = $('#donationMemo').val();
+            }
             currency = $("input[name='currency']:checked").val();
             hive_keychain.requestTransfer(
               "donate",
@@ -144,6 +172,11 @@
             token = $('#donationToken option:selected').text();
             amount = parseFloat($('#donationAmountHE').val()).toFixed(3);
             memo = $('#donationMemoHE').val();
+            if ($("#receiver").length) {
+                memo = "HiveStream donation from [{{ streamer|lower }}] : " + $('#donationMemoHE').val();
+            } else {
+                memo = $('#donationMemoHE').val();
+            }
             hive_keychain.requestSendToken(
               from,
               receiver,

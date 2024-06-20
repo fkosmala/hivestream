@@ -1,0 +1,25 @@
+<fieldset>
+    <h4>Advanced options</h4>
+    <fieldset>
+        <label for="minimalDonation">Minimal donation:</label>
+        <input type="number" id="minimalDonation" name="minimalDonation" {%if user['minimal-donation'] %}value="{{ user['minimal-donation'] }}"{% else %}value="0.001"{% endif %}>
+
+        <input type="checkbox" name="hidemsg" id="hidemsg" {% if user['hide-msg'] == "true" %}checked{% endif %}>
+        <label class="label-inline" for="hidemsg">Hide donation message</label>
+    </fieldset>
+    
+    <fieldset>
+        <label for="redirect">
+            <input type="checkbox" name="redirect" id="redirect" {% if user['redirect'] %}checked{% endif %}>
+            Redirect donation (e.g. Charity stream)
+        </label>
+
+        <div id="redirectDisplay">
+            <label for="redirectAccount">
+                Redirection account:
+                <input type="text" id="redirectAccount" name="redirectAccount" {%if user['redirect-account'] %}value="{{ user['redirect-account'] }}"{% else %}value=""{% endif %}>
+                <small>(Don't forget to disable redirection to re-enable donation on your account)</small>
+            </label>
+        </div>
+    </fieldset>
+</fieldset>
